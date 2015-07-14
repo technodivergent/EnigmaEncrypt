@@ -20,14 +20,14 @@ namespace Enigma
     public class Rotor
     {
         private const Int32 MAX = 3;
-        public Int32 Rotor1;
-        public Int32 Rotor2;
-        public Int32 Rotor3;
+        public Int32 X;
+        public Int32 Y;
+        public Int32 Z;
         private Int32 _sum;
         
         public Int32 Sum
         {
-            get { return _sum = Rotor1 + Rotor2 + Rotor3; }
+            get { return _sum = X + Y + Z; }
         }
 
         public Int32 Max
@@ -37,32 +37,30 @@ namespace Enigma
 
         public void SetRotors(Int32 Rotor1, Int32 Rotor2, Int32 Rotor3)
         {
-            this.Rotor1 = Rotor1;
-            this.Rotor2 = Rotor2;
-            this.Rotor3 = Rotor3;
+            this.X = Rotor1;
+            this.Y = Rotor2;
+            this.Z = Rotor3;
         }
 
         public void IncrementRotors()
         {
+            X++;
             // Increment rotors
-            if (Rotor3 + 1 > MAX)
+            if (X > MAX)
             {
-                this.Rotor3 = 1;
-                this.Rotor1++;
+                X = 1;
+                Y++;
             }
-            else if (Rotor2 + 1 > MAX)
+            
+            if (Y > MAX)
             {
-                this.Rotor2 = 1;
-                this.Rotor3++;
+                Y = 1;
+                Z++;
             }
-            else if (Rotor1 + 1 > MAX)
+            
+            if (Z > MAX)
             {
-                this.Rotor1 = 1;
-                this.Rotor2++;
-            } 
-            else
-            {
-                Rotor1++;
+                Z = 1;
             }
         }
     }
@@ -95,25 +93,71 @@ namespace Enigma
 
         private void Encrypt(TextBox txtDecrypted)
         {
-            MessageBox.Show(txtDecrypted.Text);
+            Char[] message = txtDecrypted.Text.ToCharArray();
+            Int32 alphaIndex = 0;
+            Int32 alphaShifted = 0;
+            Int32 shift = 0;
+            String encrypted = "";
+
+            foreach (char c in message)
+            {
+                alphaIndex = (char.ToUpper(c) - 64);
+                shift = r.Sum;
+
+                if (alphaIndex == -32)
+                    alphaIndex = 128;
+
+                alphaShifted = (alphaIndex + shift) + 64;
+
+                if (alphaShifted > 100)
+                    alphaShifted = 95;
+
+                encrypted += char.ToString((char)alphaShifted);
+                r.IncrementRotors();
+
+                // Write output
+                // Debug.WriteLine(alphaIndex.ToString() + " + " + shift.ToString() + " = " + (alphaShifted - 64).ToString());
+                
+            }
+            txtEncrypted.Text = encrypted.ToString();
         }
 
         private void Decrypt(TextBox txtEncrypted)
         {
-            MessageBox.Show(txtEncrypted.Text);
+            Char[] message = txtEncrypted.Text.ToCharArray();
+            Int32 alphaIndex = 0;
+            Int32 alphaShifted = 0;
+            Int32 shift = 0;
+            String encrypted = "";
+
+            foreach (char c in message)
+            {
+                alphaIndex = (char.ToUpper(c) - 64);
+                shift = r.Sum;
+
+                if (alphaIndex == 31)
+                    alphaIndex = 128;
+
+                alphaShifted = (alphaIndex - shift) + 64;
+
+                if (alphaShifted > 100)
+                    alphaShifted = 95;
+
+                encrypted += char.ToString((char)alphaShifted);
+                r.IncrementRotors();
+
+                // Write output
+                Debug.WriteLine(alphaIndex.ToString() + " + " + shift.ToString() + " = " + (alphaShifted - 64).ToString());
+
+            }
+            txtDecrypted.Text = encrypted.ToString();
         }
 
         private void WriteDebuggingInfo()
         {
-            /*
-            Debug.WriteLine("------------------------------");
-            Debug.WriteLine("Rotor1: " + r.Rotor1.ToString());
-            Debug.WriteLine("Rotor2: " + r.Rotor2.ToString());
-            Debug.WriteLine("Rotor3: " + r.Rotor3.ToString());
-            */
-
-            Debug.WriteLine(r.Rotor1.ToString() + " " + r.Rotor2.ToString() + " " + r.Rotor3.ToString());
-
+            // Show Rotor values
+            Debug.WriteLine(r.X.ToString() + " " + r.Y.ToString() + " " + r.Z.ToString() + " = " + r.Sum);
+            //Debug.WriteLine("----");
         }
 
         // Click Events
@@ -140,11 +184,14 @@ namespace Enigma
             // Initialize rotor values
             r.SetRotors(rotors[0], rotors[1], rotors[2]);
 
-            for (int i = 1; i <= 243; i++)
+            // For testing purposes:
+            /*
+            for (int i = 1; i <= 28; i++)
             {
                 WriteDebuggingInfo();
                 r.IncrementRotors();
             }
+            */
         }
 
         
