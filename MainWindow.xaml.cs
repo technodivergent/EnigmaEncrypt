@@ -95,6 +95,7 @@ namespace Enigma
         {
             Char[] message = txtDecrypted.Text.ToCharArray();
             Int32 alphaIndex = 0;
+            Boolean isSpace = false;
             Int32 alphaShifted = 0;
             Int32 shift = 0;
             String encrypted = "";
@@ -104,19 +105,26 @@ namespace Enigma
                 alphaIndex = (char.ToUpper(c) - 64);
                 shift = r.Sum;
 
-                if (alphaIndex == -32)
-                    alphaIndex = 128;
+                if (alphaIndex < 0)
+                    isSpace = true;
 
                 alphaShifted = (alphaIndex + shift) + 64;
 
-                if (alphaShifted > 100)
+                if (alphaShifted > 90)
+                    alphaShifted -= 26;
+
+                if (alphaShifted < 65)
+                    alphaShifted += 26;
+
+                if (isSpace)
                     alphaShifted = 95;
 
                 encrypted += char.ToString((char)alphaShifted);
                 r.IncrementRotors();
+                isSpace = false;
 
                 // Write output
-                // Debug.WriteLine(alphaIndex.ToString() + " + " + shift.ToString() + " = " + (alphaShifted - 64).ToString());
+                // Debug.WriteLine(alphaIndex.ToString() + " + " + shift.ToString() + " = " + (alphaShifted).ToString());
                 
             }
             txtEncrypted.Text = encrypted.ToString();
@@ -126,6 +134,7 @@ namespace Enigma
         {
             Char[] message = txtEncrypted.Text.ToCharArray();
             Int32 alphaIndex = 0;
+            Boolean isSpace = false;
             Int32 alphaShifted = 0;
             Int32 shift = 0;
             String encrypted = "";
@@ -136,21 +145,35 @@ namespace Enigma
                 shift = r.Sum;
 
                 if (alphaIndex == 31)
-                    alphaIndex = 128;
+                    isSpace = true;
 
                 alphaShifted = (alphaIndex - shift) + 64;
 
-                if (alphaShifted > 100)
-                    alphaShifted = 95;
+                if (alphaShifted > 90)
+                    alphaShifted -= 26;
+
+                if (alphaShifted < 65)
+                    alphaShifted += 26;
+
+                if (isSpace)
+                    alphaShifted = 32;
 
                 encrypted += char.ToString((char)alphaShifted);
                 r.IncrementRotors();
+                isSpace = false;
 
                 // Write output
-                Debug.WriteLine(alphaIndex.ToString() + " + " + shift.ToString() + " = " + (alphaShifted - 64).ToString());
+                //Debug.WriteLine(alphaIndex.ToString() + " - " + shift.ToString() + " = " + (alphaShifted - 64).ToString() + " (" + (alphaShifted).ToString() +" = '" + (char)alphaShifted + "')");
 
             }
             txtDecrypted.Text = encrypted.ToString();
+        }
+
+        private void UpdateRotorUI()
+        {
+            R1.SelectedIndex = r.X - 1;
+            R2.SelectedIndex = r.Y - 1;
+            R3.SelectedIndex = r.Z - 1;
         }
 
         private void WriteDebuggingInfo()
@@ -161,15 +184,16 @@ namespace Enigma
         }
 
         // Click Events
-
         private void btnEncrypt_Click(object sender, RoutedEventArgs e)
         {
             Encrypt(txtDecrypted);
+            UpdateRotorUI();
         }
 
         private void btnDecrypt_Click(object sender, RoutedEventArgs e)
         {
             Decrypt(txtEncrypted);
+            UpdateRotorUI();
         }
 
         private void btnSetRotor_Click(object sender, RoutedEventArgs e)
