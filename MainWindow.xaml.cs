@@ -218,6 +218,12 @@ namespace Enigma
             */
         }
 
+        private void lblHelp_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            Help frm = new Help();
+            frm.Show();
+        }
+
         
 
     }

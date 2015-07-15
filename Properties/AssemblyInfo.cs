@@ -8,9 +8,9 @@ using System.Windows;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Enigma")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Polyalphabetic encryption inspired by the Enigma machine")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Technikal Mind")]
 [assembly: AssemblyProduct("Enigma")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
